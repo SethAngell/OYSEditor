@@ -1,13 +1,21 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import SiteHeader from "./components/SiteHeader.svelte";
   import Editor from "./components/Editor.svelte";
+  import Page from "./components/onboarding/Page.svelte";
+
+  let onboarding = true;
 </script>
 
-<head>
-  <title>OYSEditor</title>
-</head>
+<div class="flex flex-col justify-center align-center">
+  {#if onboarding}
+    <Page />
+  {:else}
+    <SiteHeader />
+    <Editor />
+  {/if} -->
+<script>
+  import { Router } from "@roxi/routify";
+  import { routes } from "../.routify/routes";
+</script>
 
-<body>
-  <SiteHeader></SiteHeader>
-  <Editor></Editor>
-</body>
+<Router {routes} />
