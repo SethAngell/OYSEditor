@@ -1,9 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  font-family: "Merriweather", serif;
+	font-family: 'Merriweather', serif;
+}
+
+.background {
+	background-color: #e5e5f7;
+	opacity: 0.8;
+	background-image: linear-gradient(#444cf7 0.8px, transparent 0.8px),
+		linear-gradient(to right, #444cf7 0.8px, #e5e5f7 0.8px);
+	background-size: 16px 16px;
 }

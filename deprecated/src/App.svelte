@@ -3,7 +3,7 @@
   import Editor from "./components/Editor.svelte";
   import Page from "./components/onboarding/Page.svelte";
 
-  let onboarding = true;
+  let onboarding = false;
 </script>
 
 <div class="flex flex-col justify-center align-center">
