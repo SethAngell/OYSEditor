@@ -1,8 +1,17 @@
-<script>
+<script lang="ts">
+	import { getContext, setContext } from 'svelte';
+	import type { user, authTokens } from '$lib/interface';
+	import type { Writable } from 'svelte/store';
+
+	import { setCookie } from '$lib/authentication/AuthManager';
+
+	const currentTokens: Writable<authTokens> = getContext('currentAuthTokens');
+	const currentUser: Writable<user> = getContext('currentUser');
+
 	let email = '';
 	let password = '';
 	let api_base_url = import.meta.env.VITE_API_SERVER_BASE_URL;
-	console.log(api_base_url);
+
 	function validate() {
 		console.log('Looks good to me 🫡');
 		console.log(`Email: ${email}, Password: ${password}`);
@@ -23,10 +32,42 @@
 			.then((response) => response.json())
 			.then((data) => {
 				console.log(data);
+				setCookie('accessToken', data.access, true);
+				setCookie('refreshToken', data.refresh, false);
+
+				let newTokens: authTokens = {
+					access: data.access,
+					refresh: data.refresh
+				};
+				currentTokens.set(newTokens);
+
+				retrieve_user_info();
 			})
 			.catch((error) => {
 				console.log(error);
 				return [];
+			});
+	}
+
+	async function retrieve_user_info() {
+		console.log($currentTokens);
+		fetch(`${api_base_url}/api/v1/accounts/user/info`, {
+			method: 'GET',
+			headers: {
+				Authentication: `Bearer ${$currentTokens.access}`
+			}
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				let newUser: user = {
+					name: data.name,
+					email: data.email,
+					id: data.id
+				};
+				currentUser.set(newUser);
+			})
+			.catch((error) => {
+				console.log(error);
 			});
 	}
 </script>
