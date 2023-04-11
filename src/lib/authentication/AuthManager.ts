@@ -5,7 +5,7 @@ export function setCookie(name: string, val: string, session: boolean) {
 	if (session) {
 		document.cookie = name + '=' + value + '; path=/';
 	} else {
-		date.setTime(date.getTime() + 60 * 60 * 24 * 1000);
+		date.setTime(date.getTime() + 60 * 60 * 10 * 1000);
 		document.cookie = name + '=' + value + '; expires=' + date.toUTCString() + '; path=/';
 	}
 }

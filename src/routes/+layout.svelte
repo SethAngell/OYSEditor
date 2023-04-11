@@ -5,28 +5,24 @@
 
 	import Footer from '$lib/brand/Footer.svelte';
 
-	import type { user, authTokens } from '$lib/interface';
+	import type { user } from '$lib/interface';
 	import { getCookie } from '$lib/authentication/AuthManager';
 
 	import '../app.css';
 
-	const userStore: Writable<user> = writable();
-	const authTokenStore: Writable<authTokens> = writable();
+	export const userStore: Writable<user> = writable();
+	export const authTokenStore: Writable<string> = writable();
 
 	setContext('currentUser', userStore);
-	setContext('currentAuthTokens', authTokenStore);
+	setContext('currentAuthToken', authTokenStore);
 
 	onMount(async () => {
-		var accessFromCookie = getCookie('accessToken');
-		var refreshFromCookie = getCookie('refreshToken');
+		var accessFromCookie = getCookie('AccessToken');
+		console.log(`1: ${accessFromCookie}`);
 
 		accessFromCookie = accessFromCookie ? accessFromCookie : '';
-		refreshFromCookie = refreshFromCookie ? refreshFromCookie : '';
 
-		let newToken: authTokens = {
-			access: accessFromCookie,
-			refresh: refreshFromCookie
-		};
+		console.log(`2: ${accessFromCookie}`);
 
 		let nullUser: user = {
 			name: '',
@@ -34,7 +30,7 @@
 			email: ''
 		};
 
-		authTokenStore.set(newToken);
+		authTokenStore.set(accessFromCookie);
 		userStore.set(nullUser);
 	});
 

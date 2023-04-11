@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { getContext, setContext } from 'svelte';
-	import type { user, authTokens } from '$lib/interface';
+	import type { user } from '$lib/interface';
 	import type { Writable } from 'svelte/store';
 
 	import { setCookie } from '$lib/authentication/AuthManager';
 
-	const currentTokens: Writable<authTokens> = getContext('currentAuthTokens');
+	const currentToken: Writable<string> = getContext('currentAuthToken');
 	const currentUser: Writable<user> = getContext('currentUser');
 
 	let email = '';
@@ -18,56 +18,30 @@
 	}
 
 	async function attempt_login() {
-		fetch(`${api_base_url}/api/v1/token/`, {
+		var basicAuthHeader: string = `${email}:${password}`;
+		fetch(`${api_base_url}/api/v1/token/login/`, {
 			method: 'POST',
 			headers: {
-				'content-type': 'application/json;charset=UTF-8'
-			},
-			body: JSON.stringify({
-				username: email,
-				email: email,
-				password: password
-			})
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				console.log(data);
-				setCookie('accessToken', data.access, true);
-				setCookie('refreshToken', data.refresh, false);
-
-				let newTokens: authTokens = {
-					access: data.access,
-					refresh: data.refresh
-				};
-				currentTokens.set(newTokens);
-
-				retrieve_user_info();
-			})
-			.catch((error) => {
-				console.log(error);
-				return [];
-			});
-	}
-
-	async function retrieve_user_info() {
-		console.log($currentTokens);
-		fetch(`${api_base_url}/api/v1/accounts/user/info`, {
-			method: 'GET',
-			headers: {
-				Authentication: `Bearer ${$currentTokens.access}`
+				'content-type': 'application/json;charset=UTF-8',
+				Authorization: `Basic ${btoa(basicAuthHeader)}`
 			}
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				let newUser: user = {
-					name: data.name,
-					email: data.email,
-					id: data.id
+				console.log(data);
+				setCookie('AccessToken', data.token, false);
+				currentToken.set(data.Token);
+
+				var loggedInUser: user = {
+					name: data.user.name,
+					id: data.user.id,
+					email: data.user.email
 				};
-				currentUser.set(newUser);
+				currentUser.set(loggedInUser);
 			})
 			.catch((error) => {
 				console.log(error);
+				return [];
 			});
 	}
 </script>

@@ -1,31 +1,38 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import type { user, authTokens } from '$lib/interface';
+	import type { user, design_examples } from '$lib/interface';
 	import type { Writable } from 'svelte/store';
+	import { getRequest } from '$lib/util/Requests';
 
-	import { getRequest } from '$lib/authentication/Requests';
+	const token: Writable<string> = getContext('currentAuthToken');
 
-	let currentUser: user;
-	let currentAuthTokens: authTokens = {
-		access: '',
-		refresh: ''
-	};
+	let currentToken;
+	let designs: design_examples[] = [];
 
-	const tokens: Writable<authTokens> = getContext('currentAuthTokens');
-	const user: Writable<user> = getContext('currentUser');
+	var testUrl: string;
 
-	tokens.subscribe((newTokenValue) => {
-		currentAuthTokens = newTokenValue;
-		console.log('currentAuth');
-		console.log(currentAuthTokens);
+	token.subscribe((newVal) => {
+		getDesigns(newVal);
 	});
 
-	user.subscribe((newUserValue) => {
-		currentUser = newUserValue;
-	});
-
-	getRequest('shiet', tokens);
+	async function getDesigns(token: string) {
+		getRequest('/api/v1/profiles/designs/', token).then((newDesigns) => {
+			console.log('Hello!');
+			console.log(newDesigns);
+			(<object[]>newDesigns).forEach((design: Object) => {
+				var obj: design_examples = <design_examples>design;
+				designs.push({
+					example_url: obj.example_url,
+					id: obj.id,
+					name: obj.name,
+					template_url: obj.template_url
+				});
+				testUrl = `http://localhost:8009${obj.example_url}`;
+			});
+		});
+	}
 
 	console.log(`Currently in dev mode: ${import.meta.env.DEV}`);
-	console.log();
 </script>
+
+<img src={testUrl} alt="Hi!" />

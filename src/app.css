@@ -15,3 +15,26 @@ body {
 		linear-gradient(to right, #444cf7 0.8px, #e5e5f7 0.8px);
 	background-size: 16px 16px;
 }
+
+@keyframes loading-spinner {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.loading-spinner:before {
+	content: '';
+	box-sizing: border-box;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 20px;
+	height: 20px;
+	margin-top: -10px;
+	margin-left: -10px;
+	border-radius: 50%;
+	border: 2px solid transparent;
+	border-top-color: #444cf7;
+	border-bottom-color: #444cf7;
+	animation: spinner 0.8s ease infinite;
+}
