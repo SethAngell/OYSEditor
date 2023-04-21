@@ -5,6 +5,8 @@
 	import { getContext } from 'svelte';
 	import { getAllUserContent } from '$lib/content/ContentHelper';
 
+	import { Spinner } from 'flowbite-svelte';
+
 	// State Management
 	let scrollView: boolean = false;
 	let gridView: boolean = true;
@@ -73,7 +75,7 @@
 				{/each}
 			</div>
 		{:else}
-			<div class="loading-spinner" />
+			<Spinner />
 		{/if}
 	{/if}
 </div>
