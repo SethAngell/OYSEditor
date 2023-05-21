@@ -5,33 +5,39 @@
 
 	import Footer from '$lib/brand/Footer.svelte';
 
-	import type { user } from '$lib/interface';
+	import type { user, userInfo } from '$lib/interface';
 	import { getCookie } from '$lib/authentication/AuthManager';
 
 	import '../app.css';
 
-	export const userStore: Writable<user> = writable();
+	export const userInfoStore: Writable<userInfo> = writable();
 	export const authTokenStore: Writable<string> = writable();
 
-	setContext('currentUser', userStore);
+	setContext('currentUserInfo', userInfoStore);
 	setContext('currentAuthToken', authTokenStore);
 
+	userInfoStore.subscribe((val) => console.log(val));
+
 	onMount(async () => {
-		var accessFromCookie = getCookie('AccessToken');
-		console.log(`1: ${accessFromCookie}`);
+		var accessTokenFromCookie = getCookie('AccessToken');
+		var rawUserInfoFromCookie = getCookie('UserInfo');
+		console.log(`1: ${accessTokenFromCookie}`);
 
-		accessFromCookie = accessFromCookie ? accessFromCookie : '';
+		accessTokenFromCookie = accessTokenFromCookie ? accessTokenFromCookie : '';
 
-		console.log(`2: ${accessFromCookie}`);
+		console.log(`2: ${accessTokenFromCookie}`);
 
 		let nullUser: user = {
 			name: '',
 			id: 0,
 			email: ''
 		};
+		var userInfoFromCookie = rawUserInfoFromCookie
+			? JSON.parse(rawUserInfoFromCookie)
+			: { user: nullUser, token: accessTokenFromCookie };
+		authTokenStore.set(accessTokenFromCookie);
 
-		authTokenStore.set(accessFromCookie);
-		userStore.set(nullUser);
+		userInfoStore.set(userInfoFromCookie);
 	});
 
 	export const prerender = true;

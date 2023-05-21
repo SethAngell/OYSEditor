@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { getContext, setContext } from 'svelte';
-	import type { user } from '$lib/interface';
+	import type { user, userInfo } from '$lib/interface';
 	import type { Writable } from 'svelte/store';
 
 	import { setCookie } from '$lib/authentication/AuthManager';
+	import { json } from '@sveltejs/kit';
 
 	const currentToken: Writable<string> = getContext('currentAuthToken');
-	const currentUser: Writable<user> = getContext('currentUser');
+	const currentUserInfo: Writable<userInfo> = getContext('currentUserInfo');
 
 	let email = '';
 	let password = '';
@@ -37,7 +38,14 @@
 					id: data.user.id,
 					email: data.user.email
 				};
-				currentUser.set(loggedInUser);
+				console.log(loggedInUser);
+				currentUserInfo.set({
+					user: loggedInUser,
+					token: data.token
+				});
+
+				setCookie('UserInfo', JSON.stringify({ user: loggedInUser, token: data.token }), false);
+				location.href = '/home';
 			})
 			.catch((error) => {
 				console.log(error);

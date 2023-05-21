@@ -3,7 +3,7 @@
 	import type { Writable } from 'svelte/store';
 
 	import { getContext } from 'svelte';
-	import { getAllUserContent } from '$lib/content/ContentHelper';
+	import { getUserContent } from '$lib/content/contentUtils';
 
 	import { Spinner } from 'flowbite-svelte';
 
@@ -18,7 +18,7 @@
 
 	token.subscribe((newVal) => {
 		if (newVal != undefined) {
-			getAllUserContent(newVal)
+			getUserContent(newVal)
 				.then((result) => {
 					userContent = result as user_content;
 					currentImage = userContent?.images?.[0];
