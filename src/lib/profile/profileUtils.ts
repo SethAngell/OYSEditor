@@ -1,8 +1,8 @@
 import { getRequest } from '$lib/util/Requests';
-import type { user, design_examples, profile, experience } from '$lib/interface';
+import type { user, design, profile, experience } from '$lib/interface';
 
-export async function getDesigns(token: string): Promise<design_examples[]> {
-	return new Promise<design_examples[]>((resolve) => {
+export async function getDesigns(token: string): Promise<design[]> {
+	return new Promise<design[]>((resolve) => {
 		resolve(getRequest('/api/v1/profiles/designs/', token));
 	});
 }

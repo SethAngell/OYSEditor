@@ -40,7 +40,7 @@ export interface experience {
 	link_title: string;
 }
 
-export interface design_examples {
+export interface design {
 	example_url: string;
 	id: number;
 	name: string;
@@ -86,4 +86,21 @@ export interface blog_post {
 	visibility: string;
 	parent_blog: number;
 	open_graph_protocol_description?: string;
+}
+
+export interface blog {
+	blog_name: string;
+	blog_description: string;
+	blog_owner: number;
+}
+
+export interface option {
+	head?: boolean;
+	tail?: boolean;
+	next?: option;
+	previous?: option;
+	payload: design;
+}
+export interface optionsList {
+	options: option[];
 }

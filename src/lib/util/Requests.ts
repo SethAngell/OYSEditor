@@ -1,12 +1,8 @@
-// import type { Writable } from 'svelte/store';
-// import { get } from 'svelte/store';
-// import { getContext } from 'svelte';
-
 const api_base_url = import.meta.env.VITE_API_SERVER_BASE_URL;
-// const timer = (ms) => new Promise((res) => setTimeout(res, ms));
 
-// const tokenStore: Writable<string> = getContext('currentAuthToken');
-// const token: string = get(tokenStore);
+export function getFormattedURL(location: string): string {
+	return `${api_base_url}${location}`;
+}
 
 export async function getRequest(endpoint: string, token: string) {
 	console.log(`Token: ${token} - Endpoint: ${endpoint}`);
