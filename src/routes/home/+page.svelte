@@ -79,7 +79,7 @@
 	}
 </script>
 
-<div class="flex flex-col lg:flex-row h-5/6 w-5/6 gap-x-2 gap-y-2">
+<div class="flex flex-col lg:flex-row h-5/6 w-5/6 gap-x-2 gap-y-2 my-12 lg:my-unset">
 	<div
 		id="profile-container"
 		class="rounded-md border-slate-800 bg-zinc-50 border-2 pb-6 lg:w-3/6 w-full h-full">

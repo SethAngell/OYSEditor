@@ -2,6 +2,7 @@
 	import { setContext, onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import type { Writable } from 'svelte/store';
+	import { page } from '$app/stores';
 
 	import Footer from '$lib/brand/Footer.svelte';
 
@@ -12,11 +13,18 @@
 
 	export const userInfoStore: Writable<userInfo> = writable();
 	export const authTokenStore: Writable<string> = writable();
+	const urlContent = $page.url;
+	const nonRedirects = ['/', '/authentication/login'];
 
 	setContext('currentUserInfo', userInfoStore);
 	setContext('currentAuthToken', authTokenStore);
 
 	userInfoStore.subscribe((val) => console.log(val));
+
+	function displayLogIn() {
+		let currentLocation = urlContent.pathname;
+		location.href = `/authentication/login?redirect=${currentLocation}`;
+	}
 
 	onMount(async () => {
 		var accessTokenFromCookie = getCookie('AccessToken');
@@ -38,12 +46,15 @@
 		authTokenStore.set(accessTokenFromCookie);
 
 		userInfoStore.set(userInfoFromCookie);
+		if (!nonRedirects.includes(urlContent.pathname) && !accessTokenFromCookie) {
+			displayLogIn();
+		}
 	});
 
 	export const prerender = true;
 </script>
 
-<main class="w-screen h-screen flex flex-col items-center justify-center background">
+<main class="w-screen min-h-screen h-full flex flex-col items-center justify-center background">
 	<slot class="flex flex-col justify-center items-center h-screen" />
 	<Footer />
 </main>
