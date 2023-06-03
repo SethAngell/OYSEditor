@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SvgIcon from '$lib/util/SvgIcon.svelte';
 	import { Avatar, Spinner, Button, Hr, ButtonGroup } from 'flowbite-svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
@@ -123,13 +124,13 @@
 					src={getFormattedURL(current.selectedOption.payload.example_url)}
 					alt="A screenshot of sethangell.com utilizing the template named {current.selectedOption
 						.payload.name}." />
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 512 512"
-					class="absolute fill-purple-700 h-12 top-4 right-4 z-30 hover:fill-purple-900"
-					role="button"
+				<SvgIcon
+					color="purple"
+					icon="close"
+					additionalClasses="absolute h-12 top-4 right-4 z-30"
+					button={true}
 					on:click={closeExpandedPreview}
-					on:keypress={closeExpandedPreview}>{@html icons.close}</svg>
+					on:keypress={closeExpandedPreview} />
 			</div>
 		{/if}
 		<div class="p-2">
@@ -157,10 +158,7 @@
 				<div
 					style="height: {previewHeight}px; width: {previewWidth}px"
 					class="absolute inset-0 z-10 flex-col items-center justify-center hidden peer-hover:flex peer-focus:flex pointer-events-none">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 512 512"
-						class="fill-purple-800 h-4 z-20">{@html icons.expand}</svg>
+					<SvgIcon icon="expand" additionalClasses="h-4 z-20" color="purple" />
 				</div>
 			</div>
 		</div>
@@ -171,24 +169,19 @@
 				color="dark"
 				bind:disabled={current.selectedOption.head}
 				on:click={previousOption}
-				tabindex="0"
-				><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="fill-purple-800 h-4"
-					>{@html icons.arrowLeft}</svg
-				>Previous</Button>
+				tabindex="0">
+				<SvgIcon color="purple" additionalClasses="h-4" icon="arrowLeft" />Previous</Button>
 			<Button class="gap-x-2" outline color="dark" on:click={select} tabindex="0"
-				><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="fill-purple-800 h-4"
-					>{@html icons.check}</svg
-				>Select</Button>
+				><SvgIcon icon="check" color="purple" additionalClasses="h-4" />Select</Button>
 			<Button
 				class="gap-x-2"
 				outline
 				color="dark"
 				bind:disabled={current.selectedOption.tail}
 				on:click={nextOption}
-				tabindex="0"
-				><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="fill-purple-800 h-4"
-					>{@html icons.arrowRight}</svg
-				>Next</Button>
+				tabindex="0">
+				<SvgIcon icon="arrowRight" color="purple" additionalClasses="h-4" />
+				Next</Button>
 		</ButtonGroup>
 	{/if}
 </div>
