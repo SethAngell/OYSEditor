@@ -76,7 +76,7 @@
 	}
 
 	function editProfile() {
-		alert('Edit That Shit!');
+		location.href = `/profile?edit=true`;
 	}
 </script>
 
