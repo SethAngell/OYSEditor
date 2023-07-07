@@ -53,6 +53,7 @@
 
 	async function loadPage() {
 		await getProfile(current.userInfo.token, current.userInfo.user.id).then((newProfile) => {
+			console.log(newProfile);
 			current.profile = newProfile;
 			loading.profile = false;
 		});

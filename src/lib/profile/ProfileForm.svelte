@@ -3,12 +3,14 @@
 	import { getContext } from 'svelte';
 
 	import type { Writable } from 'svelte/store';
-	import type { userInfo, profile } from '$lib/interface';
+	import type { userInfo, profile, outboundProfile } from '$lib/interface';
+	import { Label, Button, Helper, Textarea, ButtonGroup, InputAddon, Input } from 'flowbite-svelte';
 
 	import SocialLink from '$lib/profile/SocialLink.svelte';
 	import SvgIcon from '$lib/util/SvgIcon.svelte';
 	import FileUpload from '$lib/util/FileUpload.svelte';
 	import ProfileView from '$lib/profile/ProfileView.svelte';
+	import { putRequest, postRequest } from '$lib/util/Requests';
 	import { page } from '$app/stores';
 
 	const userInfoStore: Writable<userInfo> = getContext('currentUserInfo');
@@ -59,15 +61,61 @@
 		states.viewing = false;
 	}
 
-	function onSubmit(e) {
+	function viewProfile() {
+		states.editing = false;
+		states.noProfile = !!current.profile;
+		states.viewing = true;
+	}
+
+	function validateForm(data: outboundProfile) {
+		if (!data.user) {
+			data.user = current.userInfo.user.id;
+		}
+
+		if (data?.avatar?.size == 0) {
+			delete data.avatar;
+		}
+
+		if (data?.resume?.size == 0) {
+			delete data.resume;
+		}
+
+		return data;
+	}
+
+	function onSubmit(e: any) {
 		const formData = new FormData(e.target);
 
-		const data = {};
+		const rawData = {};
 		for (let field of formData) {
 			let [key, value] = field;
-			data[key] = value;
+			// @ts-ignore
+			rawData[key] = value;
 		}
-		console.log(data);
+
+		const validatedData: outboundProfile = validateForm(rawData as outboundProfile);
+
+		if (states.noProfile) {
+			postRequest(`/api/v1/profiles/landing-page/`, current.userInfo.token, validatedData)
+				.then((response) => {
+					console.log(response);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		} else {
+			putRequest(
+				`/api/v1/profiles/landing-page/${current.userInfo.user.id}/`,
+				current.userInfo.token,
+				validatedData
+			)
+				.then((response) => {
+					console.log(response);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		}
 	}
 </script>
 
@@ -75,17 +123,16 @@
 	{#if loading.token || loading.profile}
 		<!-- <Spinner color="purple" /> -->
 	{:else if states.viewing}
-		<ProfileView {current} on:editProfile={editProfile} />
+		<ProfileView {current} on:edit={editProfile} />
 	{:else if states.editing || states.noProfile}
 		<form class="w-full p-6 karla" on:submit|preventDefault={onSubmit}>
 			<div class="flex flex-col gap-y-6 w-full mb-4">
-				<FileUpload size="xxs" type="image" name="avatar" />
-				<!-- <h2 class="text-lg">Info About You:</h2>
+				<h2 class="text-lg">Info About You:</h2>
 				<h3 class="text-md -mt-4">All of this info is required.</h3>
 				<div class="w-full">
 					<Label for="name" class="mb-2 text-md uppercase"
 						><span class="text-red-600">*</span> Name:</Label>
-					<input
+					<Input
 						type="text"
 						id="name"
 						name="name"
@@ -100,7 +147,7 @@
 				<div>
 					<Label for="headline" class="mb-2 text-md uppercase"
 						><span class="text-red-600">*</span> Headline:</Label>
-					<input
+					<Input
 						type="text"
 						id="headline"
 						placeholder="Innovation distinguishes between a leader and a follower."
@@ -110,11 +157,6 @@
 						bind:value={current.profile.headline}
 						required />
 					<Helper class="text-sm">This should be a short elevator pitch.</Helper>
-				</div>
-				<div>
-					<Label class="pb-2 text-md uppercase" for="avater"
-						><span class="text-red-600">*</span> Profile Picture:</Label>
-					<Fileupload id="avatar" name="avatar" size="sm" class="pl-2" required /> 
 				</div>
 				<div>
 					<Label for="bio" class="mb-2 text-md uppercase"
@@ -127,11 +169,21 @@
 						bind:value={current.profile.bio}
 						required />
 				</div>
+				<div>
+					<Label class="pb-2 text-md uppercase"
+						><span class="text-red-600">*</span> Profile Picture:</Label>
+					<FileUpload
+						size="xs"
+						type="image"
+						name="avatar"
+						fullWidth={true}
+						helpText="Click here to upload your profile picture" />
+				</div>
 				<h2 class="text-lg">Where To Find You Online:</h2>
 				<h3 class="text-md -mt-4">Only fill out what you'd like to share!</h3>
 				<div>
 					<Label for="contact_email" class="mb-2">Contact Email</Label>
-					<input
+					<Input
 						type="email"
 						name="contact_email"
 						id="contact_email"
@@ -147,7 +199,7 @@
 							<InputAddon
 								><SvgIcon icon="instagram" color="slate" additionalClasses="w-4 h-4" /></InputAddon>
 							<InputAddon>https://instagram.com/</InputAddon>
-							<input
+							<Input
 								id="instagram"
 								name="instagram"
 								type="text"
@@ -160,7 +212,7 @@
 							<InputAddon
 								><SvgIcon icon="spotify" color="slate" additionalClasses="w-4 h-4" /></InputAddon>
 							<InputAddon>https://spotify.com/user/</InputAddon>
-							<input
+							<Input
 								id="spotify"
 								name="spotify"
 								type="text"
@@ -173,7 +225,7 @@
 							<InputAddon
 								><SvgIcon icon="twitter" color="slate" additionalClasses="w-4 h-4" /></InputAddon>
 							<InputAddon>https://twitter.com/</InputAddon>
-							<input
+							<Input
 								id="twitter"
 								name="twitter"
 								type="text"
@@ -186,7 +238,7 @@
 							<InputAddon
 								><SvgIcon icon="linkedin" color="slate" additionalClasses="w-4 h-4" /></InputAddon>
 							<InputAddon>https://linkedin.com/</InputAddon>
-							<input
+							<Input
 								id="linkedin"
 								name="linkedin"
 								type="text"
@@ -199,7 +251,7 @@
 							<InputAddon
 								><SvgIcon icon="github" color="slate" additionalClasses="w-4 h-4" /></InputAddon>
 							<InputAddon>https://github.com/</InputAddon>
-							<input
+							<Input
 								id="github"
 								name="github"
 								type="text"
@@ -207,13 +259,21 @@
 								bind:value={current.profile.github} />
 						</ButtonGroup>
 					</div>
-					<div>
-						<Label class="pb-2 text-md uppercase" for="avater">Resume:</Label>
-						<Fileupload id="resume" name="resume" size="sm" class="pl-2" />
-					</div>
+				</div>
+				<div>
+					<Label class="pb-2 text-md uppercase">Resume:</Label>
+					<FileUpload
+						size="xs"
+						type="document"
+						name="resume"
+						fullWidth={true}
+						helpText="Click here to upload your resume" />
 				</div>
 			</div>
-			<Button type="submit">Submit</Button> -->
+			<div class="flex flex-row gap-x-2">
+				<Button outline id="submit-button" color="purple" on:click={onSubmit} type="submit"
+					>Submit</Button>
+				<Button outline id="cancel-button" color="red" on:click={viewProfile}>Cancel</Button>
 			</div>
 		</form>
 	{/if}

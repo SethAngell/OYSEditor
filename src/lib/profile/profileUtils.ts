@@ -1,5 +1,5 @@
 import { getRequest } from '$lib/util/Requests';
-import type { user, design, profile, experience } from '$lib/interface';
+import type { user, design, profile, experience, profilePicture } from '$lib/interface';
 
 export async function getDesigns(token: string): Promise<design[]> {
 	return new Promise<design[]>((resolve) => {
@@ -18,3 +18,10 @@ export async function getExperience(token: string): Promise<experience[]> {
 		resolve(getRequest(`/api/v1/profiles/experience/`, token));
 	});
 }
+
+export async function getProfilePicture(token: string, userId: number): Promise<profilePicture> {
+	return new Promise<profilePicture>((resolve) => {
+		resolve(getRequest(`/api/v1/profiles/picture/${userId}/`, token))
+	})
+}
+

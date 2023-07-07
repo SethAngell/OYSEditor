@@ -79,6 +79,6 @@
 		</div>
 	</div>
 	<div class="flex flex-row w-full justify-end">
-		<Button outline on:click={editProfile} color="purple">Edit Profile</Button>
+		<Button outline on:click={editProfile} color="purple" tabindex="0">Edit Profile</Button>
 	</div>
 </div>

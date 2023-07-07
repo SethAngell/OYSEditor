@@ -5,6 +5,7 @@
 	import { page } from '$app/stores';
 
 	import Footer from '$lib/brand/Footer.svelte';
+	import Header from '$lib/brand/Header.svelte';
 
 	import type { user, userInfo } from '$lib/interface';
 	import { getCookie } from '$lib/authentication/AuthManager';
@@ -42,7 +43,7 @@
 		};
 		var userInfoFromCookie = rawUserInfoFromCookie
 			? JSON.parse(rawUserInfoFromCookie)
-			: { user: nullUser, token: accessTokenFromCookie };
+			: { user: nullUser, token: accessTokenFromCookie, photo: null };
 		authTokenStore.set(accessTokenFromCookie);
 
 		userInfoStore.set(userInfoFromCookie);
@@ -54,7 +55,9 @@
 	export const prerender = true;
 </script>
 
-<main class="w-screen min-h-screen h-full flex flex-col items-center justify-center background">
+<main
+	class="w-screen min-h-screen h-full flex flex-col items-center justify-center background py-4">
+	<Header />
 	<slot class="flex flex-col justify-center items-center h-screen" />
 	<Footer />
 </main>

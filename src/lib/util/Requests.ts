@@ -18,23 +18,39 @@ export async function getRequest(endpoint: string, token: string) {
 		.catch((error) => {
 			console.error(error);
 		});
+}
 
-	// fetch(`${api_base_url}/api/v1/accounts/user/info`, {
-	//     method: 'GET',
-	//     headers: {{}
-	//         Authentication: `Bearer ${$currentTokens.access}`
-	//     }
-	// })
-	//     .then((response) => response.json())
-	//     .then((data) => {
-	//         let newUser: user = {
-	//             name: data.name,
-	//             email: data.email,
-	//             id: data.id
-	//         };
-	//         currentUser.set(newUser);
-	//     })
-	//     .catch((error) => {
-	//         console.log(error);
-	//     });
+export async function postRequest(endpoint: string, token: string, body: Object) {
+	console.log(`Token: ${token} - Endpoint: ${endpoint}`);
+
+	return fetch(`${api_base_url}${endpoint}`, {
+		method: 'POST',
+		headers: {
+			Authorization: `Token ${token}`
+		},
+		body: JSON.stringify(body)
+	})
+		.then((response) => response.json())
+		.then((data) => data)
+		.catch((error) => {
+			console.error(error);
+		});
+}
+
+export async function putRequest(endpoint: string, token: string, body: Object) {
+	console.log(`Token: ${token} - Endpoint: ${endpoint}`);
+
+	return fetch(`${api_base_url}${endpoint}`, {
+		method: 'PUT',
+		headers: {
+			Authorization: `Token ${token}`,
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(body)
+	})
+		.then((response) => response.json())
+		.then((data) => data)
+		.catch((error) => {
+			console.error(error);
+		});
 }

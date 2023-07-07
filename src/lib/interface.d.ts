@@ -4,12 +4,18 @@ export interface user {
 	email: string;
 }
 
+export interface profilePicture {
+	url?: string;
+}
+
 export interface userInfo {
 	user: user;
 	token: string;
+	photo?: profilePicture;
 }
 
 export interface profile {
+	id?: number;
 	user: object;
 	name: string;
 	bio: string;
@@ -23,6 +29,25 @@ export interface profile {
 	linkedin?: string;
 	resume?: string;
 	favorite_things: object;
+	map_overlay?: number;
+	template?: number;
+}
+
+export interface outboundProfile {
+	id?: number;
+	user?: object;
+	name?: string;
+	bio?: string;
+	headline?: string;
+	avatar?: File;
+	contact_email?: string;
+	instagram?: string;
+	twitter?: string;
+	github?: string;
+	spotify?: string;
+	linkedin?: string;
+	resume?: File;
+	favorite_things?: object;
 	map_overlay?: number;
 	template?: number;
 }
