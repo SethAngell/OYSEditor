@@ -4,7 +4,16 @@
 
 	import type { Writable } from 'svelte/store';
 	import type { userInfo, profile, outboundProfile } from '$lib/interface';
-	import { Label, Button, Helper, Textarea, ButtonGroup, InputAddon, Input } from 'flowbite-svelte';
+	import {
+		Label,
+		Button,
+		Helper,
+		Textarea,
+		ButtonGroup,
+		InputAddon,
+		Input,
+		Spinner
+	} from 'flowbite-svelte';
 
 	import SocialLink from '$lib/profile/SocialLink.svelte';
 	import SvgIcon from '$lib/util/SvgIcon.svelte';
@@ -12,11 +21,12 @@
 	import ProfileView from '$lib/profile/ProfileView.svelte';
 	import { putRequest, postRequest } from '$lib/util/Requests';
 	import { page } from '$app/stores';
+	import type { NoProfileConfiguredError } from '$lib/errors';
 
 	const userInfoStore: Writable<userInfo> = getContext('currentUserInfo');
 	const urlContent = $page.url;
 
-	let editOnLoad = urlContent.searchParams.get('edit') ? true : false;
+	let editOnLoad = urlContent.searchParams.get('edit')?.toLowerCase() == 'true' ? true : false;
 
 	let current = {
 		userInfo: {} as userInfo,
@@ -42,8 +52,8 @@
 	});
 
 	async function loadPage() {
-		await getProfile(current.userInfo.token, current.userInfo.user.id).then(
-			(retrievedProfile: profile) => {
+		getProfile(current.userInfo.token, current.userInfo.user.id)
+			.then((retrievedProfile: profile) => {
 				current.profile = retrievedProfile;
 				loading.profile = false;
 
@@ -51,8 +61,12 @@
 					states.viewing = false;
 					states.noProfile = true;
 				}
-			}
-		);
+			})
+			.catch((_: NoProfileConfiguredError) => {
+				states.viewing = false;
+				states.noProfile = true;
+				loading.profile = false;
+			});
 	}
 
 	function editProfile() {
@@ -84,7 +98,8 @@
 	}
 
 	function onSubmit(e: any) {
-		const formData = new FormData(e.target);
+		console.log(e.target);
+		const formData = new FormData(e.target as HTMLFormElement);
 
 		const rawData = {};
 		for (let field of formData) {
@@ -110,7 +125,7 @@
 				validatedData
 			)
 				.then((response) => {
-					console.log(response);
+					viewProfile();
 				})
 				.catch((error) => {
 					console.error(error);
@@ -121,9 +136,9 @@
 
 <div class="w-full flex flex-col content-center items-center">
 	{#if loading.token || loading.profile}
-		<!-- <Spinner color="purple" /> -->
+		<Spinner color="purple" class="my-6" />
 	{:else if states.viewing}
-		<ProfileView {current} on:edit={editProfile} />
+		<ProfileView {current} newUser={states.noProfile} on:edit={editProfile} />
 	{:else if states.editing || states.noProfile}
 		<form class="w-full p-6 karla" on:submit|preventDefault={onSubmit}>
 			<div class="flex flex-col gap-y-6 w-full mb-4">

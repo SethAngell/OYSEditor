@@ -2,7 +2,7 @@
 	import type { user, userInfo } from '$lib/interface';
 	import type { Writable } from 'svelte/store';
 
-	import { getContext, setContext } from 'svelte';
+	import { getContext, onMount, setContext } from 'svelte';
 	import { page } from '$app/stores';
 	import { InvalidLoginError } from '$lib/errors';
 
@@ -67,6 +67,21 @@
 				console.error(error);
 			});
 	}
+
+	onMount(async () => {
+		email.addEventListener('input', () => {
+			if (!email.validity.valid) {
+				email.setCustomValidity('');
+				password.setCustomValidity('');
+			}
+		});
+		password.addEventListener('input', () => {
+			if (!email.validity.valid) {
+				email.setCustomValidity('');
+				password.setCustomValidity('');
+			}
+		});
+	});
 </script>
 
 <div class="rounded-md border-slate-800 bg-zinc-50 border-2 px-8 pt-8 pb-6 w-2/5">

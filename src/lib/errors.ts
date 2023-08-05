@@ -11,3 +11,10 @@ export class InvalidLoginError extends Error {
         this.name = "InvalidLoginError";
     }
 }
+
+export class NoBlogConfiguredError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "NoBlogConfiguredError";
+    }
+}

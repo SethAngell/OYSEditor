@@ -18,6 +18,7 @@
 		simplified_content
 	} from '$lib/interface';
 	import SvgIcon from '$lib/util/SvgIcon.svelte';
+	import type { NoProfileConfiguredError, NoBlogConfiguredError } from '$lib/errors';
 
 	// State Management
 	let loading = {
@@ -31,11 +32,11 @@
 
 	// Current Resources
 	let current = {
-		profile: {} as profile,
+		profile: {} as profile | null,
 		experience: [] as experience[],
 		recentExperience: {} as experience,
 		userInfo: {} as userInfo,
-		blog: {} as blog,
+		blog: {} as blog | null,
 		posts: [] as blog_post[],
 		content: {} as user_content
 	};
@@ -52,32 +53,53 @@
 	});
 
 	async function loadPage() {
-		await getProfile(current.userInfo.token, current.userInfo.user.id).then((newProfile) => {
-			console.log(newProfile);
-			current.profile = newProfile;
-			loading.profile = false;
-		});
-		await getExperience(current.userInfo.token).then((newExperience) => {
+		getProfile(current.userInfo.token, current.userInfo.user.id)
+			.then((newProfile) => {
+				current.profile = newProfile;
+				loading.profile = false;
+			})
+			.catch((_: NoProfileConfiguredError) => {
+				current.profile = null;
+				loading.profile = false;
+			});
+		getExperience(current.userInfo.token).then((newExperience) => {
 			current.experience = newExperience;
 			loading.experience = false;
 			current.recentExperience = current.experience.filter((exp: experience) => exp.present)[0];
 		});
-		await getBlogPosts(current.userInfo.token).then((newPosts) => {
+		getBlogPosts(current.userInfo.token).then((newPosts) => {
 			current.posts = newPosts;
 			loading.posts = false;
 		});
-		await getBlog(current.userInfo.token).then((newBlog) => {
-			current.blog = newBlog;
-			loading.blog = false;
-		});
-		await getUserContent(current.userInfo.token).then((newContent) => {
+		getBlog(current.userInfo.token)
+			.then((newBlog) => {
+				current.blog = newBlog;
+				loading.blog = false;
+			})
+			.catch((_: NoBlogConfiguredError) => {
+				loading.blog = false;
+				current.blog = null;
+			});
+		getUserContent(current.userInfo.token).then((newContent) => {
 			current.content = newContent;
 			loading.content = false;
 		});
 	}
 
-	function editProfile() {
-		location.href = `/profile?edit=true`;
+	function editProfile(newUser: boolean) {
+		if (newUser) {
+			location.href = `/profile?edit=true&new=true`;
+		} else {
+			location.href = `/profile?edit=true&new=false`;
+		}
+	}
+
+	function editBlog() {
+		if (current.blog) {
+			console.log('Update blog!');
+		} else {
+			console.log('Create blog!');
+		}
 	}
 </script>
 
@@ -92,20 +114,33 @@
 		<div class="flex flex-col gap-y-2 justify-center items-center h-full mx-8">
 			{#if loading.token || loading.profile || loading.experience}
 				<Spinner color="purple" />
+			{:else if !loading.profile && current.profile == null}
+				<div class="flex flex-col gap-y-4 h-full items-center">
+					<h2 class="uppercase text-lg text-slate-800 pb-4">Well welcome!</h2>
+					<p>It looks like you haven't set up your profile yet. Let's do that now!</p>
+					<div class="flex flex-row w-full justify-end">
+						<Button
+							outline
+							on:click={() => {
+								editProfile(true);
+							}}
+							color="purple">Edit Profile</Button>
+					</div>
+				</div>
 			{:else}
 				<div class="flex flex-col gap-y-4 h-full items-center">
 					<img
-						src={current.profile.avatar}
+						src={current.profile?.avatar}
 						alt="User Avatar"
 						class="rounded-lg h-36 w-36 aspect-square object-cover border-2 border-slate-800" />
-					<h1 class="text-5xl">{current.profile.name}</h1>
+					<h1 class="text-5xl">{current.profile?.name}</h1>
 					<div class="flex flex-col gap-y-1 items-start w-full">
 						<h2 class="text-sm text-slate-600 uppercase font-bold">Headline:</h2>
-						<h3 class="text-lg">{current.profile.headline}</h3>
+						<h3 class="text-lg">{current.profile?.headline}</h3>
 					</div>
 					<div class="flex flex-col gap-y-1 items-start w-full">
 						<h2 class="text-sm text-slate-600 uppercase font-bold">Bio:</h2>
-						<p class="text-sm">{current.profile.bio}</p>
+						<p class="text-sm">{current.profile?.bio}</p>
 					</div>
 					<div class="flex flex-col gap-y-1 items-start w-full">
 						<h2 class="text-sm text-slate-600 uppercase font-bold">Current Experience:</h2>
@@ -123,7 +158,12 @@
 						<p class="text-sm">{current.recentExperience.description}</p>
 					</div>
 					<div class="flex flex-row w-full justify-end">
-						<Button outline on:click={editProfile} color="purple">Edit Profile</Button>
+						<Button
+							outline
+							on:click={() => {
+								editProfile(false);
+							}}
+							color="purple">Edit Profile</Button>
 					</div>
 				</div>
 			{/if}
@@ -135,11 +175,19 @@
 			class="rounded-md border-slate-800 bg-zinc-50 border-2 pb-6 w-full h-3/6">
 			<div
 				class="p-1 px-2 mb-8 -mx-0.5 -mt-0.5 flex flex-col justify-start rounded-t-md top-0 left-0 right-0 border-slate-800 border-2">
-				<h1 class="text-lg uppercase font-bold">{current.blog.blog_name}</h1>
+				<h1 class="text-lg uppercase font-bold">
+					{current.blog?.blog_name ? current.blog.blog_name : 'Your Blog'}
+				</h1>
 			</div>
 			<div class="flex flex-col gap-y-2 mx-8 justify-start items-start h-full">
 				{#if loading.token || loading.posts || loading.blog}
 					<Spinner color="purple" />
+				{:else if !loading.blog && current.blog == null}
+					<h2 class="uppercase text-lg text-slate-800 pb-4">Oh no!</h2>
+					<p>It looks like you don't have a blog set up. Would you like to create one?</p>
+					<div class="flex flex-row w-full justify-end pb-2">
+						<Button outline on:click={editBlog} color="purple">Create Blog</Button>
+					</div>
 				{:else}
 					<h2 class="uppercase text-lg text-slate-800 pb-4">Recent Blog Posts</h2>
 					{#each current.posts.slice(0, 3) as post}
@@ -152,7 +200,12 @@
 						</div>
 					{/each}
 					<div class="flex flex-row w-full justify-end">
-						<Button outline on:click={editProfile} color="purple">Edit Blog</Button>
+						<Button
+							outline
+							on:click={() => {
+								editProfile(false);
+							}}
+							color="purple">Edit Blog</Button>
 					</div>
 				{/if}
 			</div>
