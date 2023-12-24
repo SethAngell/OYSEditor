@@ -129,3 +129,7 @@ export interface option {
 export interface optionsList {
 	options: option[];
 }
+
+export interface backend_error {
+	detail: string
+}

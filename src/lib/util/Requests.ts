@@ -1,3 +1,4 @@
+import { ResponseNotOkError } from "$lib/errors";
 const api_base_url = import.meta.env.VITE_API_SERVER_BASE_URL;
 
 export function getFormattedURL(location: string): string {
@@ -13,7 +14,10 @@ export async function getRequest(endpoint: string, token: string) {
 			Authorization: `Token ${token}`
 		}
 	})
-		.then((response) => response.json())
+		.then((response) => {
+			console.log(response);
+			return response.json();
+		})
 		.then((data) => data)
 		.catch((error) => {
 			console.error(error);

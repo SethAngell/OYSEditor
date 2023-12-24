@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Avatar, Spinner, Button, Hr } from 'flowbite-svelte';
 	import type { user, userInfo } from '$lib/interface';
 	import type { Writable } from 'svelte/store';
 
@@ -6,7 +7,7 @@
 	import { page } from '$app/stores';
 	import { InvalidLoginError } from '$lib/errors';
 
-	import { setCookie } from '$lib/authentication/AuthManager';
+	import { getCookie, setCookie } from 'typescript-cookie';
 	import { json } from '@sveltejs/kit';
 
 	const currentToken: Writable<string> = getContext('currentAuthToken');
@@ -16,6 +17,10 @@
 	let redirect = urlContent.searchParams.get('redirect')
 		? urlContent.searchParams.get('redirect')
 		: '/home';
+
+	if (getCookie('AccessToken')) {
+		location.href = redirect as string;
+	}
 
 	let email: HTMLInputElement;
 	let password: HTMLInputElement;
@@ -28,6 +33,8 @@
 
 	async function attempt_login() {
 		var basicAuthHeader: string = `${email.value}:${password.value}`;
+		console.log(basicAuthHeader);
+		console.log(api_base_url);
 		fetch(`${api_base_url}/api/v1/token/login/`, {
 			method: 'POST',
 			headers: {
@@ -43,7 +50,7 @@
 				}
 			})
 			.then((data) => {
-				setCookie('AccessToken', data.token, false);
+				setCookie('AccessToken', data.token, { expires: 1 });
 				currentToken.set(data.Token);
 
 				var loggedInUser: user = {
@@ -56,7 +63,9 @@
 					token: data.token
 				});
 
-				setCookie('UserInfo', JSON.stringify({ user: loggedInUser, token: data.token }), false);
+				setCookie('UserInfo', JSON.stringify({ user: loggedInUser, token: data.token }), {
+					expires: 1
+				});
 				location.href = redirect as string;
 			})
 			.catch((error) => {
@@ -107,11 +116,6 @@
 				Invalid Email/Password Combination. Please try again.
 			</p>
 		</div>
-		<button
-			class="border border-slate-400 hover:border-indigo-400 rounded-md py-1 px-2 w-fit"
-			type="submit"
-			tabindex="0">
-			Login
-		</button>
+		<Button outline color="purple" type="submit">Login</Button>
 	</form>
 </div>

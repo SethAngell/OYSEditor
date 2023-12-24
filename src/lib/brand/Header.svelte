@@ -62,7 +62,7 @@
 			<div
 				on:click={clickHeader}
 				on:keydown={clickHeader}
-				class="flex flex-row gap-x-2 items-center group">
+				class="flex flex-row gap-x-2 items-center group cursor-pointer">
 				{#if current.open}
 					<SvgIcon color="slate" icon="chevronUp" additionalClasses="h-3 w-3" hover={true} />
 				{:else}

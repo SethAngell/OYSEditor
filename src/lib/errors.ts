@@ -18,3 +18,10 @@ export class NoBlogConfiguredError extends Error {
         this.name = "NoBlogConfiguredError";
     }
 }
+
+export class ResponseNotOkError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'ResponseNotOkError'
+    }
+}

@@ -19,6 +19,8 @@
 			edit: true
 		});
 	}
+
+	console.log('Viewing: ', current, newUser);
 </script>
 
 <div class="flex flex-col gap-y-4 h-full items-center m-6">
@@ -47,7 +49,7 @@
 		</div>
 		<div class="flex flex-col gap-y-1 items-start w-full">
 			<h2 class="text-sm text-slate-600 uppercase font-bold">Social URLs:</h2>
-			<div class="flex flex-row w-full justify-between">
+			<div class="flex flex-row w-full justify-between gap-x-4">
 				<SocialLink
 					fillColor="purple"
 					url="https://spotify.com/user/{current.profile.spotify}"

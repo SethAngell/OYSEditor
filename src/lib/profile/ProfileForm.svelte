@@ -77,7 +77,7 @@
 
 	function viewProfile() {
 		states.editing = false;
-		states.noProfile = !!current.profile;
+		states.noProfile = current.profile ? false : true;
 		states.viewing = true;
 	}
 
