@@ -14,7 +14,6 @@
 
 	export const userInfoStore: Writable<userInfo> = writable();
 	export const authTokenStore: Writable<string> = writable();
-	export const prerender = true;
 	const urlContent = $page.url;
 	const nonRedirects = ['/', '/authentication/login'];
 
