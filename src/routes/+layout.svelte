@@ -8,7 +8,7 @@
 	import Header from '$lib/brand/Header.svelte';
 
 	import type { user, userInfo } from '$lib/interface';
-	import { getCookie } from '$lib/authentication/AuthManager';
+	import { getCookie } from 'typescript-cookie';
 
 	import '../app.css';
 

@@ -12,7 +12,7 @@
 		ButtonGroup,
 		InputAddon,
 		Input,
-		Spinner
+		Spinner,
 	} from 'flowbite-svelte';
 
 	import SocialLink from '$lib/profile/SocialLink.svelte';
@@ -30,17 +30,17 @@
 
 	let current = {
 		userInfo: {} as userInfo,
-		profile: {} as profile
+		profile: {} as profile,
 	};
 	let loading = {
 		token: true,
-		profile: true
+		profile: true,
 	};
 
 	let states = {
 		noProfile: false,
 		editing: editOnLoad,
-		viewing: !editOnLoad
+		viewing: !editOnLoad,
 	};
 
 	userInfoStore.subscribe((newVal) => {
@@ -122,7 +122,7 @@
 			putRequest(
 				`/api/v1/profiles/landing-page/${current.userInfo.user.id}/`,
 				current.userInfo.token,
-				validatedData
+				validatedData,
 			)
 				.then((response) => {
 					viewProfile();
@@ -134,7 +134,7 @@
 	}
 </script>
 
-<div class="w-full flex flex-col content-center items-center">
+<div class="max-h-screen w-full flex flex-col content-center items-center">
 	{#if loading.token || loading.profile}
 		<Spinner color="purple" class="my-6" />
 	{:else if states.viewing}

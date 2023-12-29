@@ -21,7 +21,7 @@
 	Any easier way to display a curated list of font-awesome icons within our application
 -->
 <svg
-	class="fill-{color}-700 {hover
+	class="fill-{color}-500 {hover
 		? `hover:fill-${color}-900 group-hover:fill-${color}-900`
 		: ''} {additionalClasses}"
 	xmlns="http://www.w3.org/2000/svg"

@@ -6,9 +6,11 @@
 	import { getContext, onMount, setContext } from 'svelte';
 	import { page } from '$app/stores';
 	import { InvalidLoginError } from '$lib/errors';
+	import { ACCESS_TOKEN_COOKIE } from '$lib/CONSTANTS';
 
 	import { getCookie, setCookie } from 'typescript-cookie';
-	import { json } from '@sveltejs/kit';
+
+	export const ssr = false;
 
 	const currentToken: Writable<string> = getContext('currentAuthToken');
 	const currentUserInfo: Writable<userInfo> = getContext('currentUserInfo');
@@ -16,7 +18,7 @@
 
 	let redirect = urlContent.searchParams.get('redirect')
 		? urlContent.searchParams.get('redirect')
-		: '/home';
+		: '/new_home';
 
 	if (getCookie('AccessToken')) {
 		location.href = redirect as string;
@@ -39,8 +41,8 @@
 			method: 'POST',
 			headers: {
 				'content-type': 'application/json;charset=UTF-8',
-				Authorization: `Basic ${btoa(basicAuthHeader)}`
-			}
+				Authorization: `Basic ${btoa(basicAuthHeader)}`,
+			},
 		})
 			.then((response) => {
 				if (response.status == 401) {
@@ -56,15 +58,15 @@
 				var loggedInUser: user = {
 					name: data.user.name,
 					id: data.user.id,
-					email: data.user.email
+					email: data.user.email,
 				};
 				currentUserInfo.set({
 					user: loggedInUser,
-					token: data.token
+					token: data.token,
 				});
 
 				setCookie('UserInfo', JSON.stringify({ user: loggedInUser, token: data.token }), {
-					expires: 1
+					expires: 1,
 				});
 				location.href = redirect as string;
 			})

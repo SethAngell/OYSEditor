@@ -12,7 +12,7 @@
 	let current = {
 		userInfo: {} as userInfo,
 		profile: {} as profile,
-		open: false
+		open: false,
 	};
 	let loadingProfilePic: boolean = true;
 	let navLinks: HTMLElement;
@@ -44,14 +44,6 @@
 	}
 
 	let currentYear = new Date().getFullYear();
-
-	onMount(async () => {
-		[...navLinks.children].forEach((child) => {
-			child.addEventListener('click', () => {
-				clickHeader();
-			});
-		});
-	});
 </script>
 
 <div
@@ -60,6 +52,8 @@
 	<div class="relative">
 		{#if current?.userInfo && current.userInfo?.photo?.url}
 			<div
+				role="button"
+				tabindex="0"
 				on:click={clickHeader}
 				on:keydown={clickHeader}
 				class="flex flex-row gap-x-2 items-center group cursor-pointer">

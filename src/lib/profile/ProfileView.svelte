@@ -9,14 +9,14 @@
 
 	export let current = {
 		userInfo: {} as userInfo,
-		profile: {} as profile
+		profile: {} as profile,
 	};
 
 	export let newUser: Boolean;
 
 	function editProfile() {
 		dispatch('edit', {
-			edit: true
+			edit: true,
 		});
 	}
 
@@ -30,11 +30,14 @@
 			<Button outline on:click={editProfile} color="purple" tabindex="0">Setup Profile</Button>
 		</div>
 	{:else}
-		<img
-			src={current.profile.avatar}
-			alt="User Avatar"
-			class="rounded-lg h-36 w-36 aspect-square object-cover border-2 border-slate-800" />
-		<h1 class="text-5xl">{current.profile.name}</h1>
+		<div class="w-full flex flex-row items-end gap-x-2">
+			<img
+				src={current.profile.avatar}
+				alt="User Avatar"
+				class="rounded-lg h-36 w-36 aspect-square object-cover border-2 border-slate-800" />
+			<h1 class="text-5xl">{current.profile.name}</h1>
+		</div>
+
 		<div class="flex flex-col gap-y-1 items-start w-full">
 			<h2 class="text-sm text-slate-600 uppercase font-bold">Headline:</h2>
 			<h3 class="text-lg">{current.profile.headline}</h3>

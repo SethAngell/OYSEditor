@@ -8,7 +8,7 @@
 		sm = '56',
 		md = '64',
 		lg = '72',
-		full = 'full'
+		full = 'full',
 	}
 
 	/** Represents the size of the generated upload field in percentage widths. sm:1/4, md:1/2, lg:3/4, full:full*/
@@ -54,7 +54,9 @@
 <label for="file-input-{name}" class="contents cursor-pointer">
 	<div
 		id="avatar-container"
-		class="flex flex-col items-center justify-center h-{derivedSize} {fullWidth ? 'w-full': 'aspect-square'} border-2 border-dashed rounded-md border-slate-800">
+		class="flex flex-col items-center justify-center h-{derivedSize} {fullWidth
+			? 'w-full'
+			: 'aspect-square'} border-2 border-dashed rounded-md border-slate-800">
 		{#if !fileUploaded}
 			<SvgIcon icon="cloudUpload" additionalClasses="w-3/5 h-3/5" color="slate" />
 			<p class="{helpTextSize} px-1 text-center">{helpText}</p>
